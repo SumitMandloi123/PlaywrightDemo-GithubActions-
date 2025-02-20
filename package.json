@@ -9,7 +9,14 @@
   "description": "",
   "devDependencies": {
     "@playwright/test": "^1.50.1",
+    "@types/archiver": "^6.0.3",
     "@types/node": "^22.13.4",
+    "@types/nodemailer": "^6.4.17",
     "allure-playwright": "^3.2.0"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "dotenv": "^16.4.7",
+    "nodemailer": "^6.10.0"
   }
 }

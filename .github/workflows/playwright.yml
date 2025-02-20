@@ -33,6 +33,7 @@ jobs:
         run: |
           npm i -D @playwright/test allure-playwright
           npm i -g allure-commandline
+          npm i nodemailer archiver dotenv
 
       # Run Playwright Tests with Allure Reporter
       - name: Run Playwright tests
@@ -49,3 +50,11 @@ jobs:
           name: allure-report
           path: allure-report/
           retention-days: 30
+
+      # Send Allure Report via Email
+      - name: Send Allure Report Email
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+        run: npx ts-node path/to/sendEmail.ts
