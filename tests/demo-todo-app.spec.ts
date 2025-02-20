@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('https://demo.playwright.dev/todomv');
+  await page.goto('https://demo.playwright.dev/todomvc');
 });
 
 const TODO_ITEMS = [
@@ -55,7 +55,7 @@ test.describe('New Todo', () => {
     await createDefaultTodos(page);
 
     // create a todo count locator
-    const todoCount = page.getByTestId('todo-count')
+    const todoCount = page.getByTestId('todo-coun')
   
     // Check test using different methods.
     await expect(page.getByText('3 items left')).toBeVisible();
