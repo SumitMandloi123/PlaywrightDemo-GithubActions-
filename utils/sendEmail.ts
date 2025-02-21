@@ -35,9 +35,8 @@ output.on('close', () => {
     text: 'Attached is the Allure report from the latest GitHub Actions run.',
     attachments: [
       {
-        filename: 'allure-report.txt', // ✅ Change extension to .txt
+        filename: 'allure-report.zip',
         path: path.resolve('allure-report.zip'),
-        encoding: 'base64', // ✅ Base64 encoding helps bypass Gmail filters
       },
     ],
   };
