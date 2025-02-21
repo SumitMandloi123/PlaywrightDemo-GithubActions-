@@ -33,6 +33,7 @@ jobs:
           npm i -D @playwright/test allure-playwright
           npm i -g allure-commandline ts-node
           npm i nodemailer archiver dotenv
+
       - name: Run Playwright Tests with Allure
         run: npx playwright test --reporter=allure-playwright
 
@@ -43,6 +44,18 @@ jobs:
 
       - name: Verify Allure Report Content
         run: ls -la allure-report
+
+      # ✅ Identify Symlinks (Check if symlinks exist)
+      - name: Identify Symlinks
+        run: |
+          echo "Checking for symlinks in the allure-report directory..."
+          find allure-report -type l -exec ls -l {} \;
+
+      # ✅ Remove Symlinks (Optional: Remove symlinks if they exist)
+      - name: Remove Symlinks
+        run: |
+          echo "Removing symlinks from the allure-report directory..."
+          find allure-report -type l -exec rm -f {} \;
 
       # ✅ Use consistent artifact name
       - name: Upload Allure Report Artifact
@@ -68,8 +81,10 @@ jobs:
         with:
           name: github-pages  # Matches the upload step
           path: allure-report
+
       - name: Verify Downloaded Artifact
         run: ls -la allure-report
+
       # ✅ Deploy Allure Report to GitHub Pages
       - name: Deploy Allure Report to GitHub Pages
         uses: actions/deploy-pages@v4
