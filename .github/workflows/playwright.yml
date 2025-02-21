@@ -25,6 +25,13 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+        # Install Allure dependencies & required packages
+      - name: Install Allure & Email Dependencies
+        run: |
+          npm i -D @playwright/test allure-playwright
+          npm i -g allure-commandline ts-node
+          npm i nodemailer archiver dotenv
+
       - name: Run Playwright Tests with Allure
         run: npx playwright test --reporter=allure-playwright
 
