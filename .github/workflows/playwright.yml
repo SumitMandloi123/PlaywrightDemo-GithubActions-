@@ -25,7 +25,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-        # Install Allure dependencies & required packages
+      # ✅ Install Allure dependencies & required packages
       - name: Install Allure & Email Dependencies
         run: |
           npm i -D @playwright/test allure-playwright
@@ -40,11 +40,11 @@ jobs:
           allure generate allure-results -o allure-report --clean
           touch allure-report/.nojekyll
 
-      # ✅ Use Updated Artifact Action
+      # ✅ Use consistent artifact name
       - name: Upload Allure Report Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
+          name: github-pages   # Consistent name used here
           path: allure-report
 
   deploy:
@@ -58,11 +58,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # ✅ Download the uploaded artifact for deployment
+      # ✅ Download the uploaded artifact with correct name
       - name: Download Allure Report Artifact
         uses: actions/download-artifact@v4
         with:
-          name: allure-report
+          name: github-pages  # Matches the upload step
           path: allure-report
 
       # ✅ Deploy Allure Report to GitHub Pages
