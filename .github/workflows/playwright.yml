@@ -53,10 +53,10 @@ jobs:
 
       # Send Allure Report via Email
      - name: Send Allure Report Email
-  env:
-    EMAIL_USER: ${{ secrets.EMAIL_USER }}
-    EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-    EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
-    GITHUB_RUN_ID: ${{ github.run_id }}
-    GITHUB_REPOSITORY: ${{ github.repository }}
-  run: npx ts-node utils/sendEmail.ts
+       env:
+       EMAIL_USER: ${{ secrets.EMAIL_USER }}
+       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+       EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+       GITHUB_RUN_ID: ${{ github.run_id }}
+       GITHUB_REPOSITORY: ${{ github.repository }}
+     run: npx ts-node utils/sendEmail.ts
