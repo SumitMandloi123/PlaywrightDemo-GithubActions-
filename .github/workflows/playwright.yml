@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: lts/*
+          node-version: 18  # Explicit version for consistency
 
       - name: Install Dependencies
         run: npm install
@@ -25,26 +25,17 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # ✅ Install Allure dependencies & required packages
-      - name: Install Allure & Email Dependencies
-        run: |
-          npm i -D @playwright/test allure-playwright
-          npm i -g allure-commandline ts-node
-          npm i nodemailer archiver dotenv
-
       - name: Run Playwright Tests with Allure
         run: npx playwright test --reporter=allure-playwright
 
       - name: Generate Allure Report
         run: |
-          allure generate allure-results -o allure-report --clean
-          touch allure-report/.nojekyll
+          npx allure generate allure-results --clean -o allure-report
+          touch allure-report/.nojekyll  # Fix for GitHub Pages
 
-      # ✅ Use consistent artifact name
       - name: Upload Allure Report Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v2
         with:
-          name: github-pages   # Consistent name used here
           path: allure-report
 
   deploy:
@@ -55,21 +46,9 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      # ✅ Download the uploaded artifact with correct name
-      - name: Download Allure Report Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages  # Matches the upload step
-          path: allure-report
-
-      # ✅ Deploy Allure Report to GitHub Pages
       - name: Deploy Allure Report to GitHub Pages
         uses: actions/deploy-pages@v2
 
-      # ✅ Send Allure Report Link via Email
       - name: Send Allure Report Link via Email
         uses: dawidd6/action-send-mail@v3
         with:
