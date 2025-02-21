@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es6",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "commonjs",                             /* Specify what module code is generated (Node.js compatible). */
+    "moduleResolution": "node",                       /* Use Node.js style module resolution. */
+    "esModuleInterop": true,                           /* Emit additional JS to ease CommonJS module imports. */
+    "resolveJsonModule": true,                        /* Allow importing .json files directly. */
+    "outDir": "./dist",                               /* Specify output folder for compiled JS files. */
+    "rootDir": "./",                                  /* Specify the root folder within your source files. */
+    "forceConsistentCasingInFileNames": true,         /* Ensure file imports respect case sensitivity. */
+
+    /* Strict Type Checking */
+    "strict": true,                                   /* Enable all strict type-checking options. */
+    // "noImplicitAny": true,                         /* Raise error on variables with an implied 'any' type. */
+    // "strictNullChecks": true,                      /* Check for 'null' and 'undefined' in types. */
+    // "strictFunctionTypes": true,                   /* Ensure function types are compatible. */
+    // "noImplicitThis": true,                        /* Raise error when 'this' is of type 'any'. */
+    // "alwaysStrict": true,                          /* Parse code in strict mode and emit "use strict". */
+
+    /* Module Resolution */
+    // "baseUrl": "./",                               /* Base directory to resolve non-relative imports. */
+    // "paths": {},                                   /* Re-map imports to different paths. */
+    // "typeRoots": ["./node_modules/@types"],        /* Specify folders for type definitions. */
+
+    /* Emit Options */
+    // "declaration": true,                           /* Generate .d.ts files alongside .js. */
+    // "sourceMap": true,                             /* Generate source maps for debugging. */
+    // "removeComments": true,                        /* Strip comments from output files. */
+
+    /* JavaScript Support */
+    // "allowJs": true,                               /* Allow JavaScript files to be compiled. */
+    // "checkJs": true,                               /* Enable error reporting in JS files. */
+
+    /* Completeness */
+    "skipLibCheck": true                              /* Skip type checking of declaration files for faster builds. */
+  },
+
+  /* Project Files */
+  "include": ["utils/**/*.ts", "tests/**/*.ts"],      /* Include TypeScript files in these folders. */
+  "exclude": ["node_modules", "dist"]                 /* Exclude dependencies and compiled files. */
+}
