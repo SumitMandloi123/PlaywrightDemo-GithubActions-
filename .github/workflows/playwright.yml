@@ -68,7 +68,8 @@ jobs:
         with:
           name: github-pages  # Matches the upload step
           path: allure-report
-
+      - name: Verify Downloaded Artifact
+        run: ls -la allure-report
       # ✅ Deploy Allure Report to GitHub Pages
       - name: Deploy Allure Report to GitHub Pages
         uses: actions/deploy-pages@v2
