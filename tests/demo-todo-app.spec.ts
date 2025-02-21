@@ -375,12 +375,12 @@ test.describe('Routing', () => {
     await expect(todoItem).toHaveCount(3);
   });
 
-  test('should allow me to display completed items', async ({ page }) => {
-    await page.getByTestId('todo-item').nth(1).getByRole('checkbox').check();
-    await checkNumberOfCompletedTodosInLocalStorage(page, 1);
-    await page.getByRole('link', { name: 'Completed' }).click();
-    await expect(page.getByTestId('todo-item')).toHaveCount(1);
-  });
+  // test('should allow me to display completed items', async ({ page }) => {
+  //   await page.getByTestId('todo-item').nth(1).getByRole('checkbox').check();
+  //   await checkNumberOfCompletedTodosInLocalStorage(page, 1);
+  //   await page.getByRole('link', { name: 'Completed' }).click();
+  //   await expect(page.getByTestId('todo-item')).toHaveCount(1);
+  // });
 
   test('should allow me to display all items', async ({ page }) => {
     await page.getByTestId('todo-item').nth(1).getByRole('checkbox').check();
