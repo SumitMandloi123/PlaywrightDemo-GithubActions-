@@ -40,6 +40,10 @@ jobs:
         run: |
           allure generate allure-results -o allure-report --clean
           touch allure-report/.nojekyll
+
+      - name: Verify Allure Report Content
+        run: ls -la allure-report
+
       # ✅ Use consistent artifact name
       - name: Upload Allure Report Artifact
         uses: actions/upload-artifact@v4
