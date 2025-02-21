@@ -11,28 +11,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ✅ Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      # ✅ Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # Explicit version for consistency
+          node-version: 18
 
+      # ✅ Install Dependencies
       - name: Install Dependencies
         run: npm install
 
+      # ✅ Install Playwright Browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      # ✅ Install Allure & Email Dependencies
+      - name: Install Allure & Email Dependencies
+        run: |
+          npm i -D @playwright/test allure-playwright
+          npm i -g allure-commandline ts-node
+          npm i nodemailer archiver dotenv
+
+      # ✅ Run Playwright Tests with Allure Reporter
       - name: Run Playwright Tests with Allure
         run: npx playwright test --reporter=allure-playwright
 
+      # ✅ Generate Allure Report
       - name: Generate Allure Report
         run: |
           npx allure generate allure-results --clean -o allure-report
-          touch allure-report/.nojekyll  # Fix for GitHub Pages
+          touch allure-report/.nojekyll  # Required for GitHub Pages
 
+      # ✅ Upload Allure Report as Artifact (Correct Action Used)
       - name: Upload Allure Report Artifact
         uses: actions/upload-pages-artifact@v2
         with:
@@ -42,20 +56,23 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pages: write
       id-token: write
 
     steps:
+      # ✅ Deploy Allure Report to GitHub Pages
       - name: Deploy Allure Report to GitHub Pages
         uses: actions/deploy-pages@v2
 
+      # ✅ Send Allure Report Link via Email
       - name: Send Allure Report Link via Email
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          username: ${{ secrets.EMAIL_USER }}
-          password: ${{ secrets.EMAIL_PASS }}
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "📊 Playwright Allure Test Report"
           body: |
             Hello,
@@ -63,7 +80,7 @@ jobs:
             The latest Playwright Allure Report is available at:
             https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/index.html
 
-            Best,
+            Best,  
             GitHub Actions
-          from: "GitHub Actions <${{ secrets.EMAIL_USER }}>"
-          to: ${{ secrets.EMAIL_RECEIVER }}
+          from: "GitHub Actions <${{ secrets.EMAIL_USERNAME }}>"
+          to: "recipient@example.com"
