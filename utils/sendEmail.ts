@@ -1,4 +1,7 @@
 import nodemailer from 'nodemailer';
+import fs from 'fs';
+import path from 'path';
+import archiver from 'archiver';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -6,34 +9,44 @@ dotenv.config();
 const user = process.env.EMAIL_USER;
 const pass = process.env.EMAIL_PASS;
 const receiver = process.env.EMAIL_RECEIVER;
-const runId = process.env.GITHUB_RUN_ID;
-const repository = process.env.GITHUB_REPOSITORY;
 
 if (!user || !pass || !receiver) {
   console.error("❌ Missing email credentials in environment variables.");
   process.exit(1);
 }
 
-// Build GitHub Run URL
-const githubRunUrl = `https://github.com/${repository}/actions/runs/${runId}`;
+const output = fs.createWriteStream('allure-report.zip');
+const archive = archiver('zip', { zlib: { level: 9 } });
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: { user, pass },
-});
+archive.pipe(output);
+archive.directory('allure-report/', false);
+archive.finalize();
 
-const mailOptions = {
-  from: user,
-  to: receiver,
-  subject: '📊 Playwright Allure Report',
-  text: `✅ Playwright Allure Report is ready!\n\nView the report and download artifacts here:\n${githubRunUrl}\n\nNo attachments to avoid email blocks.`,
-};
+output.on('close', () => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user, pass },
+  });
 
-transporter.sendMail((mailOptions), (err, info) => {
-  if (err) {
-    console.error('❌ Error sending email:', err);
-    process.exit(1); // Mark GitHub Action as failed
-  } else {
-    console.log('✅ Email sent:', info.response);
-  }
+  const mailOptions = {
+    from: user,
+    to: receiver,
+    subject: '📊 Playwright Allure Report',
+    text: 'Attached is the Allure report from the latest GitHub Actions run.',
+    attachments: [
+      {
+        filename: 'allure-report.zip',
+        path: path.resolve('allure-report.zip'),
+      },
+    ],
+  };
+
+  transporter.sendMail(mailOptions, (err, info) => {
+    if (err) {
+      console.error('❌ Error sending email:', err);
+      process.exit(1); // Mark GitHub Action as failed
+    } else {
+      console.log('✅ Email sent:', info.response);
+    }
+  });
 });
