@@ -1,60 +1,69 @@
-name: Playwright Tests with Allure
+name: Playwright Tests with Allure Report
 
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
   pull_request:
-    branches: [ main, master ]
 
 jobs:
   test:
-    timeout-minutes: 60
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      # Setup Node.js
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: lts/*
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Dependencies
+        run: npm install
 
-      # Install Playwright Browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # Install Allure dependencies & required packages
-      - name: Install Allure & Email Dependencies
-        run: |
-          npm i -D @playwright/test allure-playwright
-          npm i -g allure-commandline ts-node
-          npm i nodemailer archiver dotenv
-
-      # Run Playwright Tests with Allure Reporter
-      - name: Run Playwright tests
+      - name: Run Playwright Tests with Allure
         run: npx playwright test --reporter=allure-playwright
 
-      # Generate Allure Report
       - name: Generate Allure Report
-        run: allure generate allure-results -o allure-report --clean
+        run: |
+          allure generate allure-results -o allure-report --clean
+          touch allure-report/.nojekyll
 
-      # Upload Allure Report as Artifact
-      - name: Upload Allure Report
-        uses: actions/upload-artifact@v4
+      - name: Upload Allure Report Artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          name: allure-report
-          path: allure-report/
-          retention-days: 30
+          path: allure-report
 
-      # Send Allure Report via Email
-      - name: Send Allure Report Email
-        env:
-          EMAIL_USER: ${{ secrets.EMAIL_USER }}
-          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
-        run: npx ts-node utils/sendEmail.ts
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Deploy Allure Report to GitHub Pages
+        uses: actions/deploy-pages@v2
+
+      - name: Send Allure Report Link via Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "📊 Playwright Allure Test Report"
+          body: |
+            Hello,
+
+            The latest Playwright Allure Report is available at:
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/index.html
+
+            Best,
+            GitHub Actions
+          from: "GitHub Actions <${{ secrets.EMAIL_USER }}>"
+          to: ${{ secrets.EMAIL_RECEIVER }}
