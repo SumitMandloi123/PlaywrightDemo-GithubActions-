@@ -54,7 +54,7 @@ jobs:
 
       # ✅ Send Email with HTML Report Attached
       - name: Send Email with HTML Report
-        run: npx ts-node sendEmail.ts
+        run: npx ts-node ./utils/sendEmail.ts
         env:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
