@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -10,6 +11,14 @@ const receiver = process.env.EMAIL_RECEIVER;
 
 if (!user || !pass || !receiver) {
   console.error("❌ Missing email credentials in environment variables.");
+  process.exit(1);
+}
+
+// Path to the Playwright HTML report
+const reportPath = path.resolve('playwright-report', 'index.html');
+
+if (!fs.existsSync(reportPath)) {
+  console.error("❌ Report not found at:", reportPath);
   process.exit(1);
 }
 
@@ -30,8 +39,9 @@ Best,
 GitHub Actions`,
   attachments: [
     {
-      filename: 'playwright-report.zip',
-      path: path.resolve('playwright-report.zip'),
+      filename: 'Playwright-Report.html',
+      path: reportPath,
+      contentType: 'text/html',
     },
   ],
 };
@@ -39,7 +49,7 @@ GitHub Actions`,
 transporter.sendMail(mailOptions, (err, info) => {
   if (err) {
     console.error('❌ Error sending email:', err);
-    process.exit(1); // Mark GitHub Action as failed
+    process.exit(1);
   } else {
     console.log('✅ Email sent:', info.response);
   }
