@@ -7,13 +7,16 @@ dotenv.config();
 
 const user = process.env.EMAIL_USER;
 const pass = process.env.EMAIL_PASS;
-const receiver = process.env.EMAIL_RECEIVER;
+const receivers = process.env.EMAIL_RECEIVER; // Supports multiple emails
 
 // Validate environment variables
-if (!user || !pass || !receiver) {
-  console.error("❌ Missing email credentials in environment variables.");
+if (!user || !pass || !receivers) {
+  console.error("❌ Missing email credentials or recipients in environment variables.");
   process.exit(1);
 }
+
+// Convert comma-separated emails into an array & trim spaces
+const recipientList = receivers.split(',').map(email => email.trim());
 
 // Path to the Playwright HTML report
 const reportPath = path.resolve('playwright-report', 'index.html');
@@ -33,7 +36,7 @@ const transporter = nodemailer.createTransport({
 // Email configuration
 const mailOptions = {
   from: `GitHub Actions <${user}>`,
-  to: receiver,
+  to: recipientList, // Now supports multiple emails
   subject: '📊 Playwright HTML Test Report',
   html: `
     <p>Hello,</p>
@@ -55,7 +58,7 @@ transporter.sendMail(mailOptions, (err, info) => {
     console.error('❌ Error sending email:', err);
     process.exit(1);
   } else {
-    console.log('✅ Email sent successfully to:', receiver);
+    console.log('✅ Email sent successfully to:', recipientList.join(', '));
     console.log('📧 Response:', info.response);
   }
 });
