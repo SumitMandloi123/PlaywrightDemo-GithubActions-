@@ -1,110 +1,46 @@
-name: Playwright Tests with Allure Report
+name: Playwright Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main, master ]
   pull_request:
-  workflow_dispatch:
-  page_build:
+    branches: [ main, master ]
 
 jobs:
   test:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: npm ci
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # ✅ Install Allure dependencies & required packages
-      - name: Install Allure & Email Dependencies
-        run: |
-          npm i -D @playwright/test allure-playwright
-          npm i -g allure-commandline ts-node
-          npm i nodemailer archiver dotenv
+      - name: Run Playwright Tests with HTML Report
+        run: npx playwright test
 
-      - name: Run Playwright Tests with Allure
-        run: npx playwright test --reporter=allure-playwright
+      - name: Zip Playwright HTML Report
+        run: zip -r playwright-report.zip playwright-report/
 
-      - name: Generate Allure Report
-        run: |
-          allure generate allure-results -o allure-report --clean
-          touch allure-report/.nojekyll
-
-      - name: Verify Allure Report Content
-        run: ls -la allure-report
-
-      # ✅ Identify Symlinks (Check if symlinks exist)
-      - name: Identify Symlinks
-        run: |
-          echo "Checking for symlinks in the allure-report directory..."
-          find allure-report -type l -exec ls -l {} \;
-
-      # ✅ Remove Symlinks (Optional: Remove symlinks if they exist)
-      - name: Remove Symlinks
-        run: |
-          echo "Removing symlinks from the allure-report directory..."
-          find allure-report -type l -exec rm -f {} \;
-
-      # ✅ Use consistent artifact name
-      - name: Upload Allure Report Artifact
+      - name: Upload Playwright HTML Report
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages   # Consistent name used here
-          path: allure-report
+          name: playwright-report
+          path: playwright-report.zip
+          retention-days: 30
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      # ✅ Download the uploaded artifact with correct name
-      - name: Download Allure Report Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages  # Matches the upload step
-          path: allure-report
-
-      - name: Verify Downloaded Artifact
-        run: ls -la allure-report
-
-      # ✅ Deploy Allure Report to GitHub Pages
-      - name: Deploy Allure Report to GitHub Pages
-        uses: actions/deploy-pages@v4
-        with:
-          artifact_name: github-pages
-
-      # ✅ Send Allure Report Link via Email
-      - name: Send Allure Report Link via Email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.EMAIL_USER }}
-          password: ${{ secrets.EMAIL_PASS }}
-          subject: "📊 Playwright Allure Test Report"
-          body: |
-            Hello,
-            The latest Playwright Allure Report is available at:
-            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/index.html
-            Best,
-            GitHub Actions
-          from: "GitHub Actions <${{ secrets.EMAIL_USER }}>"
-          to: ${{ secrets.EMAIL_RECEIVER }}
+      - name: Send Email with HTML Report
+        run: npx ts-node sendemail.ts
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
