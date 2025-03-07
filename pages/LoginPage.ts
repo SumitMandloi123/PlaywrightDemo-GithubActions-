@@ -1,4 +1,7 @@
 import { Page } from "@playwright/test";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default class LoginPage {
     private readonly loginIcon = "//button[contains(@class, 'mantine-UnstyledButton-root')]";
@@ -39,8 +42,15 @@ export default class LoginPage {
         await this.navigateToWebsite();
         const popup = await this.clickLoginIcon(); // Get the popup page
 
-        await this.fillUsername("test.monkey@neblar.com", popup);
-        await this.fillPassword("uHdCn6qGtu3jaBQ~", popup);
+        const username = process.env.LOGIN_USERNAME;
+        const password = process.env.LOGIN_PASSWORD;
+
+        if (!username || !password) {
+            throw new Error("Missing login credentials in .env file");
+        }
+
+        await this.fillUsername(username, popup);
+        await this.fillPassword(password, popup);
         await this.clickSigninButton(popup);
 
         // Ensure the main page is navigated properly
