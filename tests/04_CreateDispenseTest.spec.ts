@@ -33,7 +33,7 @@ test.beforeAll(async ({ browser }) => {
 
 
 test("Create a new manual dispense", async () => {
-    test.setTimeout(120000); 
+    test.setTimeout(60000); 
     homePage = new HomePage(pageInstance);
     await homePage.clickDispense();
 

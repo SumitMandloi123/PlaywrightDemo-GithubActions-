@@ -24,7 +24,7 @@ export default class CreateDispense {
 
     async typePrescriberName() {
         const input = this.page.locator(this.searchPrescriberPlaceholder);
-        await input.fill("Jayne");
+        await input.fill("Dummy");
         await input.click();
         await this.page.waitForTimeout(1000);
         await input.press("Backspace");
@@ -33,7 +33,7 @@ export default class CreateDispense {
         await input.press("ArrowDown");
         await input.press("Enter");
 
-        await this.page.waitForTimeout(5000);
+        await this.page.waitForTimeout(2000);
 
         // await this.page.waitForLoadState("networkidle"); 
 
@@ -43,10 +43,10 @@ export default class CreateDispense {
 
 
     async typeMedicine() {
-        await this.page.waitForTimeout(3000);
+        // await this.page.waitForTimeout(3000);
 
         const input = this.page.locator(this.medicinePlaceholder);
-        await input.fill("paracetamol");
+        await input.fill("Saradon");
 
         await this.page.waitForTimeout(1000);
 
@@ -59,7 +59,7 @@ export default class CreateDispense {
         // await this.page.evaluate(() => {
         //     window.print = () => {}; // Disable print dialog
         // });
-        await this.page.waitForTimeout(8000);
+        await this.page.waitForTimeout(2000);
         // await this.page.locator(this.endDispense).click();
         const element = this.page.locator(this.endDispense);
         await element.scrollIntoViewIfNeeded();
@@ -67,7 +67,7 @@ export default class CreateDispense {
         await element.click();
     
 
-        await this.page.waitForTimeout(20000);
+        await this.page.waitForTimeout(3000);
 
         // await this.page.reload();
         // await this.page.waitForTimeout(5000);

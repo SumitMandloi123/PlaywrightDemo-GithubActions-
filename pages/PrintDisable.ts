@@ -7,7 +7,7 @@ export default class PrintDisable {
 
     async disableToggle() {
 
-        await this.page.waitForTimeout(20000);
+        await this.page.waitForTimeout(5000);
         await this.page.goto("https://dev.scriptsense.co.nz/settings/printers", { waitUntil: "domcontentloaded" });
 
         // Wait for the toggle button to be visible and enabled before clicking
