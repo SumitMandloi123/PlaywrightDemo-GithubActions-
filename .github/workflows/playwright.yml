@@ -30,7 +30,7 @@ jobs:
 
       # ✅ Run Playwright Tests & Generate HTML Report (with secrets)
       - name: Run Playwright Tests with HTML Report
-        run: npx playwright test
+        run: npx playwright test --headed
         env:
           LOGIN_USERNAME: ${{ secrets.LOGIN_USERNAME }}
           LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
