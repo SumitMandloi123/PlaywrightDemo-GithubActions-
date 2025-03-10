@@ -53,6 +53,8 @@ export default class LoginPage {
         await this.fillPassword(password, popup);
         await this.clickSigninButton(popup);
 
+        
+
         // Ensure the main page is navigated properly
         await this.page.waitForURL("https://dev.scriptsense.co.nz/contact", { timeout: 10000 });
     }
