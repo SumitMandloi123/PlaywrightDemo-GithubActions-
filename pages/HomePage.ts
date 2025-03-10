@@ -13,6 +13,8 @@ export default class HomePage{
     }
 
     async clickDispense(){
+        await this.page.waitForSelector(this.dispenseButton, { state: "attached", timeout: 10000 });
+        await this.page.waitForSelector(this.dispenseButton, { state: "visible", timeout: 5000 });
         await this.page.locator(this.dispenseButton).click();
 
     }

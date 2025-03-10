@@ -15,7 +15,7 @@ export default class LoginPage {
     }
 
     async navigateToWebsite() {
-        await this.page.goto("https://dev.scriptsense.co.nz/contact");
+        await this.page.goto("https://dev.scriptsense.co.nz/");
     }
 
     async clickLoginIcon() {
@@ -55,7 +55,7 @@ export default class LoginPage {
 
         
 
-        // Ensure the main page is navigated properly
-        await this.page.waitForURL("https://dev.scriptsense.co.nz/contact", { timeout: 10000 });
+        
+        await this.page.locator("//*[@type='button' and normalize-space()='Book a Demo']").waitFor({ state: "visible", timeout: 10000 });
     }
 }
